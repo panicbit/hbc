@@ -2,7 +2,7 @@ use std::io::BufRead;
 
 use anyhow::{Context, Result};
 use num_traits::FromPrimitive;
-use serde::de::{self, DeserializeOwned, MapAccess};
+use serde::de::{self, DeserializeOwned, MapAccess, SeqAccess};
 use serde::forward_to_deserialize_any;
 
 use super::{ValueType, OBJECT_END, STRING_END};
@@ -108,13 +108,20 @@ where
         visitor.visit_bool(value)
     }
 
+    fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        visitor.visit_seq(self)
+    }
+
     fn is_human_readable(&self) -> bool {
         false
     }
 
     forward_to_deserialize_any! {
         i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 char str string
-        bytes byte_buf option unit unit_struct newtype_struct seq tuple
+        bytes byte_buf option unit unit_struct newtype_struct tuple
         tuple_struct map struct enum identifier ignored_any
     }
 }
@@ -146,5 +153,30 @@ where
         V: serde::de::DeserializeSeed<'de>,
     {
         seed.deserialize(self)
+    }
+}
+
+impl<'de, R> SeqAccess<'de> for Deserializer<R>
+where
+    R: BufRead,
+{
+    type Error = de::value::Error;
+
+    fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
+    where
+        T: de::DeserializeSeed<'de>,
+    {
+        let value_type = match self.read_value_type().map_err(de::Error::custom)? {
+            Some(value_type) => value_type,
+            None => return Ok(None),
+        };
+
+        // TODO: avoid unnecessary string allocation
+        self.read_string().map_err(de::Error::custom)?;
+
+        self.value_type = value_type;
+        let value = seed.deserialize(&mut *self)?;
+
+        Ok(Some(value))
     }
 }

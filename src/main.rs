@@ -38,7 +38,6 @@ fn get_shortcuts_vdf_path() -> PathBuf {
 
 #[derive(Deserialize, Debug)]
 struct ShortcutsVdf {
-    #[serde(deserialize_with = "deserialize_map_values")]
     shortcuts: Vec<Shortcut>,
 }
 
@@ -67,7 +66,7 @@ struct Shortcut {
     last_play_time: u32,
     #[serde(rename = "FlatpakAppID")]
     flatpak_app_id: String,
-    #[serde(rename = "tags", deserialize_with = "deserialize_map_values")]
+    #[serde(rename = "tags")]
     tags: Vec<String>,
     #[serde(flatten)]
     rest: IndexMap<String, serde_value::Value>,
