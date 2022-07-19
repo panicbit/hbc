@@ -52,32 +52,32 @@ where
     type SerializeStruct = Impossible<(), de::value::Error>;
     type SerializeStructVariant = Impossible<(), de::value::Error>;
 
-    fn serialize_bool(self, _v: bool) -> Result<Self::Ok, Self::Error> {
-        self.allow(&[])
+    fn serialize_bool(self, value: bool) -> Result<Self::Ok, Self::Error> {
+        self.serialize_u32(value as u32)
     }
 
-    fn serialize_i8(self, _v: i8) -> Result<Self::Ok, Self::Error> {
-        self.allow(&[])
+    fn serialize_i8(self, value: i8) -> Result<Self::Ok, Self::Error> {
+        self.serialize_u32(value as u32)
     }
 
-    fn serialize_i16(self, _v: i16) -> Result<Self::Ok, Self::Error> {
-        self.allow(&[])
+    fn serialize_i16(self, value: i16) -> Result<Self::Ok, Self::Error> {
+        self.serialize_u32(value as u32)
     }
 
-    fn serialize_i32(self, _v: i32) -> Result<Self::Ok, Self::Error> {
-        self.allow(&[])
+    fn serialize_i32(self, value: i32) -> Result<Self::Ok, Self::Error> {
+        self.serialize_u32(value as u32)
     }
 
-    fn serialize_i64(self, _v: i64) -> Result<Self::Ok, Self::Error> {
-        self.allow(&[])
+    fn serialize_i64(self, _: i64) -> Result<Self::Ok, Self::Error> {
+        Err(ser::Error::custom("binary vdf does not support 64 bit integers"))
     }
 
-    fn serialize_u8(self, _v: u8) -> Result<Self::Ok, Self::Error> {
-        self.allow(&[])
+    fn serialize_u8(self, value: u8) -> Result<Self::Ok, Self::Error> {
+        self.serialize_u32(value as u32)
     }
 
-    fn serialize_u16(self, _v: u16) -> Result<Self::Ok, Self::Error> {
-        self.allow(&[])
+    fn serialize_u16(self, value: u16) -> Result<Self::Ok, Self::Error> {
+        self.serialize_u32(value as u32)
     }
 
     fn serialize_u32(self, value: u32) -> Result<Self::Ok, Self::Error> {

@@ -1,11 +1,25 @@
-use crc::{CRC_32_ISO_HDLC, Crc};
+use crc::{Crc, CRC_32_ISO_HDLC};
 use derive_deref::{Deref, DerefMut};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 const BIT_31: u32 = 0x80000000;
 const LEGACY_APP_ID_LOW: u64 = 0x02000000;
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deref, DerefMut, Serialize, Deserialize)]
+#[derive(
+    Copy,
+    Clone,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    Deref,
+    DerefMut,
+    Serialize,
+    Deserialize,
+    Debug,
+)]
+#[serde(transparent)]
 pub struct AppId(u32);
 
 impl AppId {
@@ -38,7 +52,20 @@ impl From<LegacyAppId> for AppId {
     }
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deref, DerefMut, Serialize, Deserialize)]
+#[derive(
+    Copy,
+    Clone,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    Deref,
+    DerefMut,
+    Serialize,
+    Deserialize,
+    Debug,
+)]
 pub struct LegacyAppId(u64);
 
 impl LegacyAppId {

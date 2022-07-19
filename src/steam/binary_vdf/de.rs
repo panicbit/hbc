@@ -1,12 +1,11 @@
 use std::io::BufRead;
 
 use anyhow::{Context, Result};
-use enum_primitive_derive::Primitive;
 use num_traits::FromPrimitive;
 use serde::de::{self, DeserializeOwned, MapAccess};
 use serde::forward_to_deserialize_any;
 
-use super::{STRING_END, OBJECT_END, ValueType};
+use super::{ValueType, OBJECT_END, STRING_END};
 
 pub fn from_reader<D: DeserializeOwned, R: BufRead>(reader: R) -> Result<D, de::value::Error> {
     let mut de = Deserializer {
@@ -33,8 +32,8 @@ where
             return Ok(None);
         }
 
-        let value_type =
-            ValueType::from_u8(byte).with_context(|| format!("unknown value type: 0x{byte:02x}"))?;
+        let value_type = ValueType::from_u8(byte)
+            .with_context(|| format!("unknown value type: 0x{byte:02x}"))?;
 
         Ok(Some(value_type))
     }
@@ -95,12 +94,26 @@ where
         }
     }
 
+    fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        let value = self.read_int().map_err(de::Error::custom)?;
+        let value = match value {
+            0 => false,
+            1 => true,
+            _ => return Err(de::Error::custom(format!("invalid bool value: {}", value))),
+        };
+
+        visitor.visit_bool(value)
+    }
+
     fn is_human_readable(&self) -> bool {
         false
     }
 
     forward_to_deserialize_any! {
-        bool i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 char str string
+        i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f32 f64 char str string
         bytes byte_buf option unit unit_struct newtype_struct seq tuple
         tuple_struct map struct enum identifier ignored_any
     }
