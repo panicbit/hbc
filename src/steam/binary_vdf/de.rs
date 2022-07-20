@@ -68,7 +68,7 @@ where
 {
     type Error = de::value::Error;
 
-    fn deserialize_any<V>(mut self, visitor: V) -> Result<V::Value, Self::Error>
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: serde::de::Visitor<'de>,
     {
