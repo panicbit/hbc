@@ -222,9 +222,9 @@ where
 
     fn serialize_unit_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
     ) -> Result<Self::Ok, Self::Error> {
         Err(de::Error::custom(
             "serializing unit varints is not supported",
@@ -233,8 +233,8 @@ where
 
     fn serialize_newtype_struct<T: ?Sized>(
         self,
-        name: &'static str,
-        value: &T,
+        _name: &'static str,
+        _value: &T,
     ) -> Result<Self::Ok, Self::Error>
     where
         T: serde::Serialize,
@@ -246,10 +246,10 @@ where
 
     fn serialize_newtype_variant<T: ?Sized>(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
-        value: &T,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _value: &T,
     ) -> Result<Self::Ok, Self::Error>
     where
         T: serde::Serialize,
@@ -259,24 +259,21 @@ where
         ))
     }
 
-    fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
+    fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
         self.require_not_in_key()?;
         self.flush_key(ValueType::Object)?;
 
-        Ok(SerializeSeq {
-            i: 0,
-            ser: self,
-        })
+        Ok(SerializeSeq { i: 0, ser: self })
     }
 
-    fn serialize_tuple(self, len: usize) -> Result<Self::SerializeTuple, Self::Error> {
+    fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple, Self::Error> {
         Err(de::Error::custom("serializing tuple is not supported"))
     }
 
     fn serialize_tuple_struct(
         self,
-        name: &'static str,
-        len: usize,
+        _name: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeTupleStruct, Self::Error> {
         Err(de::Error::custom(
             "serializing tuple struct is not supported",
@@ -285,10 +282,10 @@ where
 
     fn serialize_tuple_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
-        len: usize,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeTupleVariant, Self::Error> {
         Err(de::Error::custom(
             "serializing tuple variant is not supported",
@@ -315,10 +312,10 @@ where
 
     fn serialize_struct_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
-        len: usize,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeStructVariant, Self::Error> {
         Err(de::Error::custom(
             "serializing struct variant is not supported",
@@ -427,7 +424,6 @@ where
     where
         T: Serialize,
     {
-
         self.ser.current_key = Some(self.i.to_string());
 
         self.ser.position = Position::Value;
@@ -441,7 +437,8 @@ where
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-        self.ser.writer
+        self.ser
+            .writer
             .write_all(&[super::OBJECT_END])
             .map_err(de::Error::custom)?;
 
