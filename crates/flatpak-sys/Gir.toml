@@ -1,0 +1,13 @@
+[options]
+library = "Flatpak"
+version = "1.0"
+target_path = "."
+min_cfg_version = "1.0"
+work_mode = "sys"
+target_path = "."
+girs_directories = ["/usr/share/gir-1.0/"]
+external_libraries = [
+    "Gio",
+    "GLib",
+    "GObject",
+]

@@ -1,0 +1,110 @@
+[package]
+name = "flatpak-sys"
+version = "0.0.1"
+edition = "2021"
+build = "build.rs"
+[package.metadata.system-deps.flatpak]
+name = "flatpak"
+version = "1"
+
+[package.metadata.system-deps.flatpak.v1_0_3]
+version = "1.0.3"
+
+[package.metadata.system-deps.flatpak.v1_1]
+version = "1.1"
+
+[package.metadata.system-deps.flatpak.v1_1_1]
+version = "1.1.1"
+
+[package.metadata.system-deps.flatpak.v1_1_2]
+version = "1.1.2"
+
+[package.metadata.system-deps.flatpak.v1_3_2]
+version = "1.3.2"
+
+[package.metadata.system-deps.flatpak.v1_3_3]
+version = "1.3.3"
+
+[package.metadata.system-deps.flatpak.v1_3_4]
+version = "1.3.4"
+
+[package.metadata.system-deps.flatpak.v1_4]
+version = "1.4"
+
+[package.metadata.system-deps.flatpak.v1_4_2]
+version = "1.4.2"
+
+[package.metadata.system-deps.flatpak.v1_5]
+version = "1.5"
+
+[package.metadata.system-deps.flatpak.v1_5_1]
+version = "1.5.1"
+
+[package.metadata.system-deps.flatpak.v1_5_2]
+version = "1.5.2"
+
+[package.metadata.system-deps.flatpak.v1_7]
+version = "1.7"
+
+[package.metadata.system-deps.flatpak.v1_7_1]
+version = "1.7.1"
+
+[package.metadata.system-deps.flatpak.v1_7_3]
+version = "1.7.3"
+
+[package.metadata.system-deps.flatpak.v1_8]
+version = "1.8"
+
+[package.metadata.system-deps.flatpak.v1_9_1]
+version = "1.9.1"
+
+[package.metadata.system-deps.flatpak.v1_11_1]
+version = "1.11.1"
+[package.metadata.docs.rs]
+features = ["dox"]
+
+[lib]
+name = "flatpak_sys"
+
+[dependencies]
+libc = "0.2"
+
+[dependencies.gio]
+package = "gio-sys"
+git = "https://github.com/gtk-rs/gtk-rs-core"
+
+[dependencies.glib]
+package = "glib-sys"
+git = "https://github.com/gtk-rs/gtk-rs-core"
+
+[dependencies.gobject]
+package = "gobject-sys"
+git = "https://github.com/gtk-rs/gtk-rs-core"
+
+[build-dependencies]
+system-deps = "6"
+
+[dev-dependencies]
+shell-words = "1.0.0"
+tempfile = "3"
+
+[features]
+v1_0_3 = []
+v1_1 = ["v1_0_3"]
+v1_1_1 = ["v1_1"]
+v1_1_2 = ["v1_1_1"]
+v1_3_2 = ["v1_1_2"]
+v1_3_3 = ["v1_3_2"]
+v1_3_4 = ["v1_3_3"]
+v1_4 = ["v1_3_4"]
+v1_4_2 = ["v1_4"]
+v1_5 = ["v1_4_2"]
+v1_5_1 = ["v1_5"]
+v1_5_2 = ["v1_5_1"]
+v1_7 = ["v1_5_2"]
+v1_7_1 = ["v1_7"]
+v1_7_3 = ["v1_7_1"]
+v1_8 = ["v1_7_3"]
+v1_9_1 = ["v1_8"]
+v1_11_1 = ["v1_9_1"]
+dox = []
