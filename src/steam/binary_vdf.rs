@@ -4,11 +4,13 @@ pub use self::{
     de::{from_bytes, from_reader},
     ser::{to_bytes, to_writer},
     token_deserializer::TokenDeserializer,
+    token_serializer::TokenSerializer,
 };
 
 mod de;
 mod ser;
-mod token_deserializer;
+pub mod token_deserializer;
+mod token_serializer;
 
 const STRING_END: u8 = 0x00;
 const OBJECT_END: u8 = 0x08;
