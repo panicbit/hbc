@@ -16,6 +16,10 @@ pub fn from_reader<D: DeserializeOwned, R: BufRead>(reader: R) -> Result<D, de::
     D::deserialize(&mut de)
 }
 
+pub fn from_bytes<D: DeserializeOwned>(bytes: &[u8]) -> Result<D, de::value::Error> {
+    from_reader(bytes)
+}
+
 struct Deserializer<R> {
     reader: R,
     value_type: ValueType,

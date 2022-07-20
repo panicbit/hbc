@@ -1,25 +1,30 @@
-use std::fs::File;
+use std::fs::{File, self};
 use std::io::BufReader;
 use std::path::PathBuf;
 
-use anyhow::Result;
+use anyhow::{Result, Context};
 use indexmap::IndexMap;
-use serde::de::DeserializeOwned;
-use serde::{Deserialize, Deserializer};
+use serde::{Deserialize, Serialize};
 use steam::id::AppId;
-
-use crate::serde_utils::deserialize_map_values;
 
 mod steam;
 mod serde_utils;
 
 fn main() -> Result<()> {
-    let file = File::open(get_shortcuts_vdf_path())?;
-    let mut file = BufReader::new(file);
+    let file = fs::read(get_shortcuts_vdf_path())?;
 
-    let shortcuts = steam::binary_vdf::from_reader::<ShortcutsVdf, _>(&mut file)?;
-
+    let shortcuts = steam::binary_vdf::from_bytes::<ShortcutsVdf>(&file)?;
     println!("{:#?}", shortcuts);
+
+    let bytes = steam::binary_vdf::to_bytes(&shortcuts)
+        .context("failed to serialize bvdf")?;
+
+
+    std::fs::write("/tmp/foo.bvdf", &bytes)?;
+
+    let shortcuts2 = steam::binary_vdf::from_bytes::<ShortcutsVdf>(&bytes)?;
+
+    // println!("{:#?}", shortcuts2);
 
     // println!("{}", serde_json::to_string_pretty(&shortcuts).unwrap());
 
@@ -36,12 +41,12 @@ fn get_shortcuts_vdf_path() -> PathBuf {
     todo!()
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 struct ShortcutsVdf {
     shortcuts: Vec<Shortcut>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 #[serde(rename_all = "PascalCase")]
 struct Shortcut {
     #[serde(rename = "appid")]
@@ -70,15 +75,4 @@ struct Shortcut {
     tags: Vec<String>,
     #[serde(flatten)]
     rest: IndexMap<String, serde_value::Value>,
-}
-
-fn deserialize_map_as_vec<'de, D, T>(de: D) -> Result<Vec<T>, D::Error>
-where
-    D: Deserializer<'de>,
-    T: DeserializeOwned,
-{
-    let map = IndexMap::<String, T>::deserialize(de).map_err(serde::de::Error::custom)?;
-    let vec = map.into_values().collect::<Vec<_>>();
-
-    Ok(vec)
 }

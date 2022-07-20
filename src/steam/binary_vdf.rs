@@ -1,8 +1,10 @@
+use enum_primitive_derive::Primitive;
+
+pub use self::de::{from_reader, from_bytes};
+pub use self::ser::{to_writer, to_bytes};
+
 mod de;
 mod ser;
-
-pub use de::from_reader;
-use enum_primitive_derive::Primitive;
 
 const STRING_END: u8 = 0x00;
 const OBJECT_END: u8 = 0x08;
